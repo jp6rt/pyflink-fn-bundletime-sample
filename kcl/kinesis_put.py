@@ -1,7 +1,7 @@
 import boto3
 import json
 import random
-import datetime
+from datetime import datetime, timedelta
 import time
 from botocore.config import Config
 from uuid import uuid4
@@ -15,11 +15,7 @@ my_config = Config(
 
 )
 
-# stream_name = 'flink-joey-test-sink'
-# stream_arn = 'arn:aws:kinesis:ap-southeast-1:808791718174:stream/flink-joey-test-sink'
-
-stream_name = 'flink-joey-test-source'
-# stream_arn = 'arn:aws:kinesis:ap-southeast-1:808791718174:stream/flink-joey-test-source'
+stream_name = 'flink-source'
 
 
 kinesis_client = boto3.client(
@@ -36,7 +32,7 @@ partition_key = str(uuid4())
 
 while True:
     message = {
-        'event_time': datetime.datetime.now().isoformat(),
+        'event_time': (datetime.now() + timedelta(hours=-8)).isoformat(),
         'user_id': user_id,
         'session_id': session_id
     }

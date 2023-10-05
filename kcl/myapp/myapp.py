@@ -13,7 +13,7 @@ import sys
 import time
 import json
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from amazon_kclpy import kcl
 from amazon_kclpy.v3 import processor
@@ -103,12 +103,12 @@ class RecordProcessor(processor.RecordProcessorBase):
         self.log("Record (Partition Key: {pk}, Sequence Number: {seq}, Subsequence Number: {sseq}, Data Size: {ds}"
                  .format(pk=partition_key, seq=sequence_number, sseq=sub_sequence_number, ds=len(data)))
         datao = json.loads(str(data, 'UTF-8'))
-        print(f"[kcl_log] individual processor event time={datetime.now().isoformat()}, data={data}")
+        print(f"[kcl_log] individual processor event time={(datetime.now() + timedelta(hours=-8)).isoformat()}, data={data}")
         event_time = datao['event_time']
-        flink_received_ts = datao['flink_processing_eventtime'] if 'flink_processing_eventtime' in datao else datetime.now().isoformat()
-        latency = int( datetime.now().timestamp() * 1000 ) - int( datetime.fromisoformat(event_time).timestamp() * 1000 )
+        flink_received_ts = datao['flink_processing_eventtime'] if 'flink_processing_eventtime' in datao else (datetime.now() + timedelta(hours=-8)).isoformat()
+        latency = int( (datetime.now() + timedelta(hours=-8)).timestamp() * 1000 ) - int( datetime.fromisoformat(event_time).timestamp() * 1000 )
         flink_received_latency = int( datetime.fromisoformat(flink_received_ts).timestamp() * 1000 ) - int( datetime.fromisoformat(event_time).timestamp() * 1000 )
-        flink_to_kcl_latency = int( datetime.now().timestamp() * 1000 ) - int( datetime.fromisoformat(flink_received_ts).timestamp() * 1000 )
+        flink_to_kcl_latency = int( (datetime.now() + timedelta(hours=-8)).timestamp() * 1000 ) - int( datetime.fromisoformat(flink_received_ts).timestamp() * 1000 )
 
         print(f"[kcl_log] data event_time={datao['event_time']}, latency={latency}, flink_received_latency={flink_received_latency}, flink_to_kcl_latency={flink_to_kcl_latency}")
         print("[kcl_log]-----------------------------------------------------------------------------")
@@ -134,7 +134,7 @@ class RecordProcessor(processor.RecordProcessorBase):
             records.
         """
         try:
-            print(f"[kcl_log] process records length={len(process_records_input.records)}, eventime={datetime.now().isoformat()}")
+            print(f"[kcl_log] process records length={len(process_records_input.records)}, eventime={((datetime.now() + timedelta(hours=-8))).isoformat()}")
             print("[kcl_log]-----------------------------------------------------------------------------")
             print("[kcl_log]-----------------------------------------------------------------------------")
             for record in process_records_input.records:
