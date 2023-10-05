@@ -36,13 +36,18 @@ flink run -py app.py --pyFiles /app/deps
 
 ### Local kcl
 
-```
+```bash
 pushd kcl
+
+# Add venv if it doesn't exist. Use conda if preffered
+python3.8 -m venv venv
+. venv/bin/activate
 
 python setup.py download_jars
 python setup.py install
 
-amazon_kclpy_helper.py --print_command --java <path-to-java> --properties samples/sample.properties
+# Run the app
+`amazon_kclpy_helper.py --print_command --java /usr/bin/java --properties myapp/myapp.properties` | cut -b 167- | grep kcl_log
 ```
 
 ## Packaging app for data analytics
