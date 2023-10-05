@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  jobmanager:
+    image: pyflink:1.15
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: jobmanager
+    expose:
+      - 8081
+    ports:
+      - 8081:8081
+    volumes:
+      - ${PWD}/app:/app
+    environment:
+      FLINK_PROPERTIES: "jobmanager.rpc.address: jobmanager"
+      IS_LOCAL: "True"
+    networks:
+      - flink
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  taskmanager:
+    depends_on:
+      - jobmanager
+    image: pyflink:1.15
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    command: taskmanager
+    volumes:
+      - ${PWD}/app:/app
+    environment:
+      FLINK_PROPERTIES: "jobmanager.rpc.address: jobmanager"
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN}
+    networks:
+      - flink
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+networks:
+  flink:
+    name: flink-network
+    external: true

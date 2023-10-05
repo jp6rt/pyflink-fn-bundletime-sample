@@ -1,0 +1,28 @@
+[
+  {
+    "PropertyGroupId": "kinesis.analytics.flink.run.options",
+    "PropertyMap": {
+      "python": "app.py",
+      "jarfile": "lib/flink-sql-connector-kinesis-1.15.4.jar",
+      "pyFiles": "deps/"
+    }
+  },
+  {
+    "PropertyGroupId": "consumer.config.0",
+    "PropertyMap": {
+      "input.stream.name": "flink-source",
+      "flink.stream.initpos": "LATEST",
+      "aws.region": "ap-southeast-1",
+      "flink.stream.recordpublisher": "EFO",
+      "flink.stream.efo.consumername": "flink-efo-consumer"
+    }
+  },
+  {
+    "PropertyGroupId": "producer.config.0",
+    "PropertyMap": {
+      "output.stream.name": "flink-sink",
+      "shard.count": "1",
+      "aws.region": "ap-southeast-1"
+    }
+  }
+]
