@@ -8,7 +8,8 @@ from pyflinkkinesis.kinesis import (
     PartitionKeyGenerator,
 )
 
-from pyflink.common import SimpleStringSchema
+from pyflink.common import SimpleStringSchema, Configuration
+from pyflink.util.java_utils import get_j_env_configuration
 from pyflink.datastream.functions import MapFunction
 from pyflink.common.typeinfo import Types
 
@@ -36,6 +37,9 @@ class AddTimestampFunction(MapFunction):
 def main():
     env = StreamExecutionEnvironment.get_execution_environment()
     env.set_runtime_mode(RuntimeExecutionMode.STREAMING)
+    config = Configuration(j_configuration=get_j_env_configuration(env._j_stream_execution_environment))
+    # config.set_string("python.execution-mode", 'thread')
+    config.set_integer("python.fn-execution.bundle.time", 50)
 
     properties_json_path = "/etc/flink/application_properties.json"  # on kda
     is_local = (
@@ -52,7 +56,7 @@ def main():
     props = get_application_properties(properties_json_path)
 
     input_property_map = property_map(props, "consumer.config.0")
-    
+
     kinesis_consumer = FlinkKinesisConsumer(
         input_property_map["input.stream.name"],
         SimpleStringSchema(),  # DeserializationSchema.
@@ -76,11 +80,11 @@ def main():
         .set_partition_key_generator(PartitionKeyGenerator.random())
         .set_stream_name(output_property_map["output.stream.name"])
         .set_fail_on_error(True)
-        # .set_max_batch_size(500) 
+        # .set_max_batch_size(1) 
         # .set_max_in_flight_requests(50)
         # .set_max_buffered_requests(10000)
         # .set_max_batch_size_in_bytes(5 * 1024 * 1024)
-        # .set_max_time_in_buffer_ms(5000) 
+        .set_max_time_in_buffer_ms(50) 
         # .set_max_record_size_in_bytes(1 * 1024 * 1024)
         .build()
     )
