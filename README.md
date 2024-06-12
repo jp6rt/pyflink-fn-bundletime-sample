@@ -1,4 +1,13 @@
-# Pyflink 1.15 kinesis connectors latency
+# Sample code for pyflink low latency processing using `python.fn-execution.bundle.time`. 
+
+## Use case
+
+To achieve a low latency configuration on a pyflink application, `fn-execution.bundle.time` should be defined.
+
+### Links
+
+- [Stackoverflow issue](https://stackoverflow.com/questions/77236489/apache-flink-seems-buffering-events-before-processing-and-streaming-to-the-sink)
+- [Configuration documentaiton](https://nightlies.apache.org/flink/flink-docs-master/docs/dev/python/python_config/)
 
 ## Setup
 
